@@ -3,37 +3,14 @@ package main
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"log"
 	"net/http"
 	"os"
-	"sync"
 
 	extism "github.com/extism/go-sdk"
 	"github.com/tetratelabs/wazero"
 )
-
-/*
-WASM Plugins
-store all your plugins in a normal Go hash map, protected by a Mutex
-(reproduce something like the node.js event loop)
-to avoid "memory collision 💥"
-*/
-var m sync.Mutex
-var plugins = make(map[string]*extism.Plugin)
-
-func StorePlugin(plugin *extism.Plugin) {
-	plugins["code"] = plugin
-}
-
-func GetPlugin() (extism.Plugin, error) {
-	if plugin, ok := plugins["code"]; ok {
-		return *plugin, nil
-	} else {
-		return extism.Plugin{}, errors.New("🔴 no plugin")
-	}
-}
 
 /*
 GetBytesBody returns the body of an HTTP request as a []byte.
