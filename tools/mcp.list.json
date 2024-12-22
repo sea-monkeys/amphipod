@@ -28,6 +28,24 @@
             },
             "required": ["name"]
           }
+        },
+        {
+          "name": "add_numbers",
+          "description": "Add two numbers",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "number1": {
+                "type": "number",
+                "description": "The first number"
+              },
+              "number2": {
+                "type": "number",
+                "description": "The second number"
+              }
+            },
+            "required": ["number1", "number2"]
+          }
         }
       ]
     }

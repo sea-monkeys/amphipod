@@ -16,6 +16,9 @@ import (
 var (
 	FALSE = false
 	TRUE  = true
+	MCP_SERVER_URL = "http://localhost:8080"
+	OLLAMA__URL = "http://localhost:11434"
+	TOOLS_MODEL = "allenporter/xlam:1b"
 )
 
 func main() {
@@ -23,17 +26,16 @@ func main() {
 
 	var ollamaRawUrl string
 	if ollamaRawUrl = os.Getenv("OLLAMA_HOST"); ollamaRawUrl == "" {
-		ollamaRawUrl = "http://localhost:11434"
+		ollamaRawUrl = OLLAMA__URL
 	}
 
-	strToolsList, _ := mcp.ToolsList("http://localhost:8080")
+	strToolsList, _ := mcp.ToolsList(MCP_SERVER_URL)
 	strOllamaToolsList, _ := mcp.TransformToOllamaToolsFormat(strToolsList)
-	fmt.Println("🔧", strOllamaToolsList)
+	//fmt.Println("🔧", strOllamaToolsList)
 
 	url, _ := url.Parse(ollamaRawUrl)
 
 	client := api.NewClient(url, http.DefaultClient)
-
 
 	// transform strOllamaToolsList to api.Tools
 	var toolsList api.Tools
@@ -46,14 +48,15 @@ func main() {
 	// Prompt construction
 	messages := []api.Message{
 		{Role: "user", Content: "Say hello to Bob Morane"},
-		//{Role: "user", Content: "add 28 to 12"},
+		{Role: "user", Content: "add 28 to 12"},
 		{Role: "user", Content: "Say goodbye to Sarah Connor"},
 		{Role: "user", Content: "Say goodbye to Jane Doe"},
 		{Role: "user", Content: "Say hello to John Doe"},
+		{Role: "user", Content: "add 35 to 7"},
 	}
 
 	req := &api.ChatRequest{
-		Model:    "allenporter/xlam:1b", // Find a tool model
+		Model:    TOOLS_MODEL,
 		Messages: messages,
 		Options: map[string]interface{}{
 			"temperature":   0.0,
@@ -75,7 +78,7 @@ func main() {
 				"arguments": toolCall.Function.Arguments,
 			}
 
-			mcpResp, err := mcp.ToolsCall("http://localhost:8080", data)
+			mcpResp, err := mcp.ToolsCall(MCP_SERVER_URL, data)
 			if err != nil {
 				log.Fatalln("😡", err)
 			}
@@ -90,5 +93,4 @@ func main() {
 		log.Fatalln("😡", err)
 	}
 	
-	//fmt.Println()
 }
