@@ -11,7 +11,7 @@ EOM
 
 echo "Sending: ${DATA} on ${SERVICE_URL}"
 echo ""
-# --silent
+
 
 curl --no-buffer ${SERVICE_URL}/tools/call \
     -H "Content-Type: application/json" \
