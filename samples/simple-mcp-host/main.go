@@ -17,7 +17,7 @@ var (
 	FALSE = false
 	TRUE  = true
 	MCP_SERVER_URL = "http://localhost:8080"
-	OLLAMA__URL = "http://localhost:11434"
+	OLLAMA_URL = "http://localhost:11434"
 	TOOLS_MODEL = "allenporter/xlam:1b"
 )
 
@@ -26,10 +26,15 @@ func main() {
 
 	var ollamaRawUrl string
 	if ollamaRawUrl = os.Getenv("OLLAMA_HOST"); ollamaRawUrl == "" {
-		ollamaRawUrl = OLLAMA__URL
+		ollamaRawUrl = OLLAMA_URL
 	}
 
-	strToolsList, _ := mcp.ToolsList(MCP_SERVER_URL)
+	var mcpServerUrl string
+	if mcpServerUrl = os.Getenv("MCP_SERVER_HOST"); mcpServerUrl == "" {
+		mcpServerUrl = MCP_SERVER_URL
+	}
+
+	strToolsList, _ := mcp.ToolsList(mcpServerUrl)
 	strOllamaToolsList, _ := mcp.TransformToOllamaToolsFormat(strToolsList)
 	//fmt.Println("🔧", strOllamaToolsList)
 
@@ -78,7 +83,7 @@ func main() {
 				"arguments": toolCall.Function.Arguments,
 			}
 
-			mcpResp, err := mcp.ToolsCall(MCP_SERVER_URL, data)
+			mcpResp, err := mcp.ToolsCall(mcpServerUrl, data)
 			if err != nil {
 				log.Fatalln("😡", err)
 			}
