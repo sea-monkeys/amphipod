@@ -1,4 +1,4 @@
-module 01-json-prompt
+module mcp-host
 
 go 1.23.1
 
