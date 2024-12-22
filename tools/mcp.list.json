@@ -1,0 +1,35 @@
+{
+    "result": {
+      "tools": [
+        {
+          "name": "say_hello",
+          "description": "Say hello to a given person with his name",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "The name of the person"
+              }
+            },
+            "required": ["name"]
+          }
+        },
+        {
+          "name": "say_goodbye",
+          "description": "Say goodbye to a given person with his name",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "The name of the person"
+              }
+            },
+            "required": ["name"]
+          }
+        }
+      ]
+    }
+  }
+  
