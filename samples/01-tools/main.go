@@ -48,6 +48,8 @@ func main() {
 		{Role: "user", Content: "Say hello to Bob Morane"},
 		//{Role: "user", Content: "add 28 to 12"},
 		{Role: "user", Content: "Say goodbye to Sarah Connor"},
+		{Role: "user", Content: "Say goodbye to Jane Doe"},
+		{Role: "user", Content: "Say hello to John Doe"},
 	}
 
 	req := &api.ChatRequest{
