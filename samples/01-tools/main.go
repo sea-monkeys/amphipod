@@ -1,7 +1,7 @@
 package main
 
 import (
-	"01-json-prompt/mcp"
+	"mcp-host/mcp"
 	"context"
 	"encoding/json"
 	"fmt"
