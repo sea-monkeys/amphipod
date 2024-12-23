@@ -30,6 +30,8 @@ services:
       - cd /app && go mod tidy && go run main.go
     environment:
       - HTTP_PORT=5050
+      - USE_HTTPS=false
+      - REQUIRE_AUTH=false
     ports:
       - 8080:5050
     volumes:
