@@ -1,2 +1,4 @@
 backup
 ollama-data
+*.crt
+*.key

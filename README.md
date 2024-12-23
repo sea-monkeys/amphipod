@@ -19,21 +19,152 @@ While Anthropic's MCP specification is excellent, it requires implementing MCP c
 3. Providing a consistent interface across different programming languages
 4. Executing tools through WebAssembly plugins for enhanced security and portability
 
-## 🚀 Getting Started
-
-> 🚧 This is a work in progress. Please check back later for installation instructions.
-<!--
-### Prerequisites
-
-### Installation
-
-### Basic Usage
--->
-
 ## 🔧 API Endpoints
 
 - `GET /tools/list`: Get available tools
 - `POST /tools/call`: Execute a tool
+
+## 🚀 Getting Started
+
+### Start the MCP Server
+
+```bash
+go run main.go
+```
+
+#### Configuration for HTTPS and Authentication token (optional)
+
+```bash
+export HTTP_PORT=8080                      # Port to listen on
+export USE_HTTPS=true                      # Enable HTTPS
+export CERT_FILE=mcp.amphipod.local.crt    # Path to SSL certificate
+export KEY_FILE=mcp.amphipod.local.key     # Path to SSL private key
+export AUTH_TOKEN=shrimpsarebeautiful      # Authentication token
+export REQUIRE_AUTH=true                   # Enable authentication
+go run main.go
+```
+
+##### Generate a self-signed certificate
+
+You can use mkcert to generate a self-signed certificate for development purposes:
+
+```bash
+mkcert \
+-cert-file mcp.amphipod.local.crt \
+-key-file mcp.amphipod.local.key \
+amphipod.local "*.amphipod.local" localhost 127.0.0.1 ::1
+```
+
+Then add the following line to your `/etc/hosts` file:
+
+```bash
+0.0.0.0 mcp.amphipod.local
+```
+
+## Tools
+
+The tools are WebAssembly plugins. The tools are loaded by the MCP server and executed when called by the host application.
+
+The list of tools is defined in the `./tools/mcp.list.json` file. The wasm plugin are loaded from the `./functions` directory.
+
+### Test the MCP Server endpoints
+
+You can simply use `curl` to test the MCP server endpoints.
+
+#### List available tools
+
+```bash
+SERVICE_URL="http://localhost:8080"
+
+curl --no-buffer ${SERVICE_URL}/tools/list 
+```
+
+#### Call a tool(s)
+
+```bash
+SERVICE_URL="http://localhost:8080"
+
+read -r -d '' DATA <<- EOM
+{
+  "name":"say_hello",
+  "arguments": {
+    "name":"John Doe"
+  }
+}
+EOM
+
+curl --no-buffer ${SERVICE_URL}/tools/call \
+    -H "Content-Type: application/json" \
+    -d "${DATA}" 
+```
+
+```bash
+SERVICE_URL="http://localhost:8080"
+
+read -r -d '' DATA <<- EOM
+{
+  "name":"say_goodbye",
+  "arguments": {
+    "name":"Jane Doe"
+  }
+}
+EOM
+
+curl --no-buffer ${SERVICE_URL}/tools/call \
+    -H "Content-Type: application/json" \
+    -d "${DATA}" 
+```
+
+```bash
+SERVICE_URL="http://localhost:8080"
+
+read -r -d '' DATA <<- EOM
+{
+  "name":"add_numbers",
+  "arguments": {
+    "number1":28,
+    "number2":14
+  }
+}
+EOM
+
+curl --no-buffer ${SERVICE_URL}/tools/call \
+    -H "Content-Type: application/json" \
+    -d "${DATA}" 
+```
+
+### Tests with HTTPS and Authentication token
+
+If you have enabled HTTPS and authentication token, you can test the endpoints with `curl` as follows:
+
+#### List available tools
+
+```bash
+SERVICE_URL="https://mcp.amphipod.local:8080"
+
+curl -H "Authorization: Bearer shrimpsarebeautiful" --no-buffer ${SERVICE_URL}/tools/list 
+```
+> where `shrimpsarebeautiful` is the authentication token
+
+#### Call a tool(s)
+
+```bash
+SERVICE_URL="https://mcp.amphipod.local:8080"
+
+read -r -d '' DATA <<- EOM
+{
+  "name":"say_hello",
+  "arguments": {
+    "name":"John Doe"
+  }
+}
+EOM
+
+curl -H "Authorization: Bearer shrimpsarebeautiful" --no-buffer ${SERVICE_URL}/tools/call \
+    -H "Content-Type: application/json" \
+    -d "${DATA}" 
+```
+
 
 ## 📦 Tool Development
 
@@ -116,6 +247,13 @@ sequenceDiagram
     Server-->>Client: Return tool output
     Client-->>Host: Return tool response
 ```
+
+## MCP Host GenAI Application development
+
+The Host GenAI application will be developed in the programming language of your choice. The Host GenAI application will use HTTP request to interact with the MCP Server.
+
+Look at the `./samples` directory for examples of Host GenAI applications.
+
 
 ## 🤝 Contributing
 
