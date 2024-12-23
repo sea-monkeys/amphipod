@@ -7,12 +7,20 @@ services:
     ports:
       - 11434:11434
 
-  download-tools-llm:
+  download-tools-llm-1:
     image: curlimages/curl:8.6.0
     entrypoint: ["curl", "ollama-service:11434/api/pull", "-d", "{\"name\": \"allenporter/xlam:1b\"}"]
     depends_on:
       ollama-service:
         condition: service_started
+
+  download-tools-llm-2:
+    image: curlimages/curl:8.6.0
+    entrypoint: ["curl", "ollama-service:11434/api/pull", "-d", "{\"name\": \"qwen2.5:0.5b\"}"]
+    depends_on:
+      ollama-service:
+        condition: service_started
+
 
   mcp-server:
     image: golang:1.23.4-alpine
@@ -37,10 +45,13 @@ services:
     environment:
       - OLLAMA_HOST=http://ollama-service:11434
       - MCP_SERVER_HOST=http://mcp-server:5050
+      - TOOLS_LLM=qwen2.5:0.5b
     volumes:
       - ./:/app
     depends_on:
-      download-tools-llm:
+      download-tools-llm-1:
+        condition: service_completed_successfully
+      download-tools-llm-2:
         condition: service_completed_successfully
       mcp-server:
         condition: service_started # healthcheck ?

@@ -16,9 +16,6 @@ import (
 var (
 	FALSE = false
 	TRUE  = true
-	MCP_SERVER_URL = "http://localhost:8080"
-	OLLAMA_URL = "http://localhost:11434"
-	TOOLS_MODEL = "allenporter/xlam:1b"
 )
 
 func main() {
@@ -26,12 +23,17 @@ func main() {
 
 	var ollamaRawUrl string
 	if ollamaRawUrl = os.Getenv("OLLAMA_HOST"); ollamaRawUrl == "" {
-		ollamaRawUrl = OLLAMA_URL
+		ollamaRawUrl = "http://localhost:11434"
 	}
 
 	var mcpServerUrl string
 	if mcpServerUrl = os.Getenv("MCP_SERVER_HOST"); mcpServerUrl == "" {
-		mcpServerUrl = MCP_SERVER_URL
+		mcpServerUrl = "http://localhost:8080"
+	}
+
+	var toolsLlm string
+	if toolsLlm = os.Getenv("TOOLS_LLM"); toolsLlm == "" {
+		toolsLlm = "allenporter/xlam:1b"
 	}
 
 	strToolsList, _ := mcp.ToolsList(mcpServerUrl)
@@ -61,7 +63,7 @@ func main() {
 	}
 
 	req := &api.ChatRequest{
-		Model:    TOOLS_MODEL,
+		Model:    toolsLlm,
 		Messages: messages,
 		Options: map[string]interface{}{
 			"temperature":   0.0,
@@ -69,7 +71,6 @@ func main() {
 		},
 		Tools:  toolsList,
 		Stream: &FALSE,
-		Format: json.RawMessage(`"json"`),
 	}
 
 	

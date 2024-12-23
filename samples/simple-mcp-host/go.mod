@@ -1,5 +1,5 @@
 module mcp-host
 
-go 1.23.1
+go 1.23.4
 
-require github.com/ollama/ollama v0.5.1
+require github.com/ollama/ollama v0.5.4
