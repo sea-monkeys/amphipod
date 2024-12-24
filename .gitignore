@@ -2,3 +2,4 @@ backup
 ollama-data
 *.crt
 *.key
+amphipod
